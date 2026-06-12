@@ -6,23 +6,28 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.SlotConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IOConstants;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static frc.robot.Constants.IOConstants.*;
 
+@Logged(strategy = Logged.Strategy.OPT_IN)
 public class Flywheel extends SubsystemBase {
 
     private final TalonFX m_flywheelMotor; 
     private final TalonFX m_flywheelEncoder; // integrated encoder
     private final VoltageOut m_voltageRequest;
+    private final VelocityVoltage m_velocityRequest;
     private double m_currentFlywheelTargetRPM = kFlywheelDefaultTargetRPM;
     
     // Feedforward controller to run the shooter wheel in closed-loop, set the constants equal to
@@ -43,6 +48,7 @@ public class Flywheel extends SubsystemBase {
         m_flywheelMotor = new TalonFX(kFlywheelMotorID);
         m_flywheelEncoder = m_flywheelMotor;
         m_voltageRequest = new VoltageOut(0.0);
+        m_velocityRequest = new VelocityVoltage(0);
 
         TalonFXConfiguration flywheelConfig = new TalonFXConfiguration();
         flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
@@ -78,6 +84,9 @@ public class Flywheel extends SubsystemBase {
                 m_shooterFeedback.calculate(m_flywheelEncoder.getVelocity().getValueAsDouble(), 
                                            m_currentFlywheelTargetRPM / 60.0)
                     + m_shooterFeedforward.calculate(m_currentFlywheelTargetRPM / 60.0))); 
+            
+            //m_flywheelMotor.setControl(velocityRequest.withVelocity(m_currentFlywheelTargetRPM/60.0));
+            
         })
         .finallyDo(
             () -> {
@@ -116,14 +125,39 @@ public class Flywheel extends SubsystemBase {
         return false;
     }
 
+    
+
     @Override
     public void periodic() {
     // This method will be called once per scheduler run
+        // 1. Extract the raw numeric values from Phoenix 6 StatusSignals
+        double actualVelocityRPS = m_flywheelMotor.getVelocity().getValueAsDouble();
+        double actualPositionRotations = m_flywheelMotor.getPosition().getValueAsDouble();
+        double motorCurrentAmps = m_flywheelMotor.getStatorCurrent().getValueAsDouble();
+
+        // 2. Push fields to NetworkTables for SmartDashboard / AdvantageScope
+        SmartDashboard.putNumber("Flywheel/Actual Velocity (RPS)", actualVelocityRPS);
+        SmartDashboard.putNumber("Flywheel/Target Velocity (RPS)", m_currentFlywheelTargetRPM/60.0);
+        SmartDashboard.putNumber("Flywheel/Actual Velocity (RPM)", actualVelocityRPS * 60.0);
+        SmartDashboard.putNumber("Flywheel/Target Velocity (RPM)", m_currentFlywheelTargetRPM);
+        SmartDashboard.putNumber("Flywheel/Position (Rotations)", actualPositionRotations);
+        SmartDashboard.putNumber("Flywheel/Stator Current (A)", motorCurrentAmps);
     }
 
     @Override
     public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+    }
+
+    // ======= Logging Methods ========
+    @Logged
+    public double getShooterSpeedRPS() {
+        return m_flywheelMotor.getVelocity().getValueAsDouble();
+    }
+
+    @Logged
+    public double getShooterSpeedRPM() {
+        return m_flywheelMotor.getVelocity().getValueAsDouble() * 60.0;
     }
 
 }

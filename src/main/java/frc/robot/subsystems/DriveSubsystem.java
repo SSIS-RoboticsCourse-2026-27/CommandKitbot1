@@ -16,10 +16,14 @@ import com.revrobotics.ResetMode;
 //import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import com.ctre.phoenix6.hardware.CANcoder;
+
+@Logged(strategy = Logged.Strategy.OPT_IN)
 public class DriveSubsystem extends SubsystemBase {
     // --- motors ---
     private final SparkMax m_leftLeader;
@@ -31,8 +35,9 @@ public class DriveSubsystem extends SubsystemBase {
     private final DifferentialDrive m_differentialDrive;
 
     // --- Encoders ---
-    private final RelativeEncoder m_leftEncoder;
-    private final RelativeEncoder m_rightEncoder;
+    //private final RelativeEncoder m_leftEncoder;
+    //private final RelativeEncoder m_rightEncoder;
+    private final CANcoder m_rightEncoder;
 
     /** Creates a new ExampleSubsystem. */
     public DriveSubsystem() {
@@ -67,8 +72,10 @@ public class DriveSubsystem extends SubsystemBase {
         m_rightFollower.configure(m_rightFollowerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // Built-in encoders
-        m_leftEncoder = m_leftLeader.getEncoder();
-        m_rightEncoder = m_rightLeader.getEncoder();
+        //m_leftEncoder = m_leftLeader.getEncoder();
+        //m_rightEncoder = m_rightLeader.getEncoder();
+        m_rightEncoder = new CANcoder(kRightEncoderID);
+        resetEncoders();
 
         m_differentialDrive = new DifferentialDrive(m_leftLeader, m_rightLeader);
     }
@@ -98,29 +105,32 @@ public class DriveSubsystem extends SubsystemBase {
     /**
      * Returns the distance traveled by the left side in meters.
      * Negated so that forward motion (left motor inverted) gives positive distance.
-     */
     public double getLeftDistanceMeters() {
         return -m_leftEncoder.getPosition() * kDistancePerRotationMeters;
     }
+     */
 
     /**
      * Returns the distance traveled by the right side in meters.
      */
+    @Logged
     public double getRightDistanceMeters() {
-        return m_rightEncoder.getPosition() * kDistancePerRotationMeters;
+        return m_rightEncoder.getPosition().getValueAsDouble() * kDistancePerRotationMeters;
     }
 
     /**
      * Returns the average distance traveled by both sides in meters.
      * Convenient for straight-line distance calculations in auto.
      */
+    @Logged
     public double getAverageDistanceMeters() {
-        return (getLeftDistanceMeters() + getRightDistanceMeters()) / 2.0;
+        //return (getLeftDistanceMeters() + getRightDistanceMeters()) / 2.0;
+        return getRightDistanceMeters();
     }
 
     /** Resets both drive encoders to zero. */
     public void resetEncoders() {
-        m_leftEncoder.setPosition(0);
+        //m_leftEncoder.setPosition(0);
         m_rightEncoder.setPosition(0);
     }
 

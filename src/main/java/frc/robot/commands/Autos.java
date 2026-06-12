@@ -22,7 +22,7 @@ public final class Autos {
     public static Command driveDistance(DriveSubsystem driveSubsystem) {
         return Commands.sequence(
             driveSubsystem.resetEncoderCommand(),
-            driveSubsystem.arcadeDriveCommand(()->0.8, ()->0.0)
+            driveSubsystem.arcadeDriveCommand(()->0.4, ()->0.0)
                 .until(() -> driveSubsystem.getAverageDistanceMeters() > AutoConstants.kDistanceTargetMeters)
                 .finallyDo(() -> driveSubsystem.stopDriveCommand())
         );

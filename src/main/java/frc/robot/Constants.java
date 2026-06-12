@@ -24,6 +24,8 @@ public final class Constants {
         public static final int kRightLeaderId = 10;
         public static final int kRightFollowerId = 7;
 
+        public static final int kRightEncoderID = 4;
+
         public static final boolean kLeftLeaderReversed = true;
         public static final boolean kRighteaderReversed = false;
 
@@ -31,10 +33,10 @@ public final class Constants {
 
         /** Wheel diameter in meters (e.g. 6 in ≈ 0.1524 m). */
         public static final double kWheelDiameterMeters = 0.1524;
-        /** Gear ratio motor-to-wheel (e.g. 10.71 for KitBot). */
-        public static final double kDriveGearRatio = 10.71;
+        /** Gear ratio motor-to-wheel (e.g. 8.45 for KitBot). */
+        public static final double kDriveGearRatio = 8.45; //10.71;
         public static final double kDistancePerRotationMeters = 
-            Math.PI * kWheelDiameterMeters / kDriveGearRatio;
+            Math.PI * kWheelDiameterMeters; // encoder directly on wheel shaft
         
         /**
          * Approximate track width (meters) used for encoder-only in-place turns.
