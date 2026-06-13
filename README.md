@@ -1,7 +1,7 @@
 # FRC 2026 KitBot - Command-Based Robot Code
 
 ## Overview
-This repository contains the code for our 2026 FRC KitBot, built using the WPILib Command-Based framework. The robot features a differential drivebase, a flywheel shooter, an intake, and a loader mechanism.
+This repository contains sample code for the 2026 FRC KitBot, built using the WPILib Command-Based framework. The robot features a differential drivebase, a flywheel shooter, an intake, and a loader mechanism.
 
 ## Hardware Specifications
 
@@ -63,6 +63,8 @@ The robot is controlled via an Xbox Controller plugged into Port 0.
 * Feedforward and feedback constants for the Flywheel have been successfully calculated and implemented using the WPILib System Identification (SysId) tool.
 
 ### To Do
+* **Reorganize Commands:** Move main flywheel command to a command class, so we can specify subsystems used (also uses Loader)
+* **Intake Command:** Write basic intake command (also needs loader); recommended speed roughly 2x robot ground speed
 * **Drivebase SysId:** Run system identification on the drivebase to determine precise feedforward and feedback gains.
 * **Hardware Upgrades:** Install a second drivebase encoder on the left side to improve tracking reliability.
 * **Autonomous Tuning:** Calibrate the autonomous turning scalar (`kAutoTurnDistanceScalar` currently set to `0.125`) once the second encoder is installed.
