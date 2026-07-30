@@ -45,6 +45,16 @@ public final class Constants {
          */    
         public static final double kDriveTrackWidthMeters = 0.55;
 
+        // feedforward gains determined from SysId
+        public static final double kDriveBase_kS = 1.008;
+        public static final double kDriveBase_kV = 2.575;
+        public static final double kDriveBase_kA = 0.675;
+
+        // pid control parameters: 
+        public static final double kDriveBase_kP = 3.21;
+        public static final double kDriveBase_kD = 0.0;
+        public static final double kDriveBase_kI = 0.0;  
+
         /**
          * Scalar applied to encoder-only turn distance calculations.
          * If the robot over-rotates, decrease this; if it under-rotates, increase it.
