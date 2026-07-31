@@ -129,6 +129,14 @@ public class DriveSubsystem extends SubsystemBase {
         return getRightDistanceMeters();
     }
 
+    /** Returns current velocity estimate in m/s based on the CANcoder 
+     * that is mounted directly to the output axel. 
+     */
+    @Logged()
+    public double getVelocityMetersPerSecond() {
+        return m_rightEncoder.getVelocity().getValueAsDouble() * kDistancePerRotationMeters; 
+    }
+
     /** Resets both drive encoders to zero. */
     public void resetEncoders() {
         //m_leftEncoder.setPosition(0);

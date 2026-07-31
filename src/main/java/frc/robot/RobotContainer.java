@@ -72,7 +72,7 @@ public class RobotContainer {
         // Control the drive with split-stick arcade controls
         m_driveSubsystem.setDefaultCommand(
             m_driveSubsystem.arcadeDriveCommand(
-                () -> m_driverController.getLeftY(), () -> -m_driverController.getRightX()));
+                () -> -m_driverController.getLeftY(), () -> -m_driverController.getRightX()));
 
 
         // test the feedforward gains
