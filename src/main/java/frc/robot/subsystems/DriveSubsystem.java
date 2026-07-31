@@ -17,6 +17,7 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -159,6 +160,32 @@ public class DriveSubsystem extends SubsystemBase {
     @Override
     public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+    }
+
+
+    /* Helper methods for setting drive commands in meters per second */
+    private final SimpleMotorFeedforward m_feedforward = 
+        new SimpleMotorFeedforward(kDriveBase_kS, kDriveBase_kV, kDriveBase_kA); // Replace with your actual constants
+
+    /**
+     * Commands the robot to drive at a specific target velocity using only feedforward.
+     * 
+     * @param targetVelocityMetersPerSecond The desired speed in m/s
+     */
+    public Command testFeedforwardCommand(double targetVelocityMetersPerSecond) {
+        return run(() -> {
+            // Calculate the required voltage to achieve the target velocity
+            double appliedVoltage = m_feedforward.calculate(targetVelocityMetersPerSecond);
+
+            // Bypass DifferentialDrive and apply the voltage directly to the motor controllers
+            m_leftLeader.setVoltage(appliedVoltage);
+            m_rightLeader.setVoltage(appliedVoltage);
+
+            // Feed the Motor Safety watchdog so it doesn't disable our motors
+            m_differentialDrive.feed();
+        })
+        .finallyDo(() -> this.stopMotors())
+        .withName("testFeedforward");
     }
 }
 

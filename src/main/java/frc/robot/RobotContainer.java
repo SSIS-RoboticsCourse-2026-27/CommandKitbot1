@@ -73,6 +73,25 @@ public class RobotContainer {
         m_driveSubsystem.setDefaultCommand(
             m_driveSubsystem.arcadeDriveCommand(
                 () -> m_driverController.getLeftY(), () -> -m_driverController.getRightX()));
+
+
+        // test the feedforward gains
+        m_driverController
+            .a()
+            .whileTrue(m_driveSubsystem.testFeedforwardCommand(1.0)); // test 1.0 m/s
+
+        m_driverController
+            .b()
+            .whileTrue(m_driveSubsystem.testFeedforwardCommand(2.0)); // test 2.0 m/s
+
+        m_driverController
+            .x()
+            .whileTrue(m_driveSubsystem.testFeedforwardCommand(-1.0)); // test -1.0 m/s
+ 
+        m_driverController
+            .y()
+            .whileTrue(m_driveSubsystem.testFeedforwardCommand(-2.0)); // test 2.0 m/s
+
     }
 
     /**

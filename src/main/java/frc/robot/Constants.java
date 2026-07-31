@@ -51,7 +51,7 @@ public final class Constants {
         public static final double kDriveBase_kA = 0.675;
 
         // pid control parameters: 
-        public static final double kDriveBase_kP = 3.21;
+        public static final double kDriveBase_kP = 3.21; // possibly up to 4.0
         public static final double kDriveBase_kD = 0.0;
         public static final double kDriveBase_kI = 0.0;  
 
